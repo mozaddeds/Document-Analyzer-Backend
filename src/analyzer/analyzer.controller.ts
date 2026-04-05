@@ -1,5 +1,5 @@
-// analyzer.controller.ts
-import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+// src/analyzer/analyzer.controller.ts
+import { Controller, Post, UploadedFile, UseInterceptors, HttpStatus } from '@nestjs/common';
 import { AnalyzerService } from './analyzer.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -8,14 +8,28 @@ export class AnalyzerController {
   constructor(private readonly analyzerService: AnalyzerService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))  // ← Matches formData.append('file', ...)
-  uploadFile(
-    @UploadedFile() file: Express.Multer.File  // ← Correct type!
-  ) {
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      return { message: 'No file uploaded', error: true };
+      return {
+        success: false,
+        message: 'No file uploaded',
+        error: true
+      };
     }
     
-    return this.analyzerService.analyzeFile(file);
+    try {
+      const result = await this.analyzerService.analyzeFile(file);
+      return {
+        success: true,
+        data: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+        error: true
+      };
+    }
   }
 }

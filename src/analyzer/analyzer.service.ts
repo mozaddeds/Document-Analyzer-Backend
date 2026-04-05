@@ -1,4 +1,4 @@
-// analyzer.service.ts
+// src/analyzer/analyzer.service.ts
 import { Injectable } from '@nestjs/common';
 import { GeminiService } from '../gemini/gemini.service';
 
@@ -7,18 +7,20 @@ export class AnalyzerService {
   constructor(private readonly geminiService: GeminiService) {}
 
   async analyzeFile(file: Express.Multer.File) {
-    console.log('Analyzing file:');
-    console.log('- Original name:', file.originalname);
-    console.log('- Mimetype:', file.mimetype);
-    console.log('- Size:', file.size, 'bytes');
-    console.log('- Buffer length:', file.buffer.length);
-
-    const response = await this.geminiService.connectGemini(file)
-    
-    return { 
-      message: 'File analyzed successfully', 
-      result: response,
-      text: response.text
-    };
+    try {
+      // Call Gemini service to analyze the file
+      const result = await this.geminiService.connectGemini(file);
+      
+      // Return a structured response
+      return {
+        summary: result.text || 'No summary generated',
+        fileName: file.originalname,
+        fileSize: file.size,
+        fileType: file.mimetype,
+        analyzedAt: new Date().toISOString()
+      };
+    } catch (error) {
+      throw new Error(`Analysis failed: ${error.message}`);
+    }
   }
 }
