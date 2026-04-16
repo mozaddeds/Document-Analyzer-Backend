@@ -77,7 +77,7 @@ Bootstrap Flow:
 4. Log server URL to console
 
 CORS Configuration:
-- Origin: http://localhost:3000 (Next.js frontend)
+- Origin: [Document Analyzer](https://document-analyzer-frontend-cyan.vercel.app/) (Next.js frontend)
 - Methods: GET, POST, PUT, DELETE, OPTIONS
 - Headers: Content-Type, Authorization
 - Credentials: true
@@ -287,20 +287,6 @@ Why This Model?
 - Handles PDF files natively
 - Good at structured output
 
-Alternatives:
-- gemini-1.5-flash: Stable version, similar performance
-- gemini-1.5-pro: Better quality, slower, more expensive
-
-Cost Comparison (approximate):
-- gemini-3-flash-preview: $0.075 per 1M input tokens
-- Typical PDF resume: ~1000 tokens
-- 1000 resumes: ~$0.075
-
-Free Tier Limits:
-- 15 requests per minute
-- 1 million tokens per day
-- 1500 requests per day
-- Sufficient for demo/portfolio use
 
 DEPENDENCY INJECTION FLOW
 --------------------------
@@ -480,79 +466,9 @@ Manual Testing:
 4. Remove GEMINI_API_KEY → Check error handling
 5. Send malformed request → Check graceful failure
 
-Unit Testing (recommended):
-- Test GeminiService.connectGemini with mock API
-- Test AnalyzerService with mock GeminiService
-- Test AnalyzerController with mock AnalyzerService
-
-Integration Testing (recommended):
-- Test full flow with real API (use test key)
-- Verify response structure
-- Test error scenarios
-
-End-to-End Testing:
-- Use frontend to upload file
-- Verify backend processes correctly
-- Check database (if added)
 
 DEBUGGING CHECKLIST
 -------------------
-Issue: "Upload fails silently"
-[ ] Check backend terminal for errors
-[ ] Verify CORS headers in browser Network tab
-[ ] Check GEMINI_API_KEY is set
-[ ] Test endpoint with curl/Postman
-[ ] Check Multer is installed
-
-Issue: "Invalid JSON response"
-[ ] Check backend returns data
-[ ] Verify JSON structure matches frontend expectations
-[ ] Test Gemini API separately
-[ ] Check for console.log output
-
-Issue: "Gemini API error"
-[ ] Verify API key is valid
-[ ] Check rate limits not exceeded
-[ ] Test with smaller file
-[ ] Check internet connection
-
-DEPLOYMENT
-----------
-
-Local Development:
-1. Install dependencies: npm install
-2. Create .env file with GEMINI_API_KEY
-3. Run: npm run start:dev
-4. Access: http://localhost:8000
-
-Production Deployment:
-1. Build: npm run build
-2. Set environment variables in hosting platform
-3. Start: npm run start:prod
-4. Use HTTPS reverse proxy (nginx, Caddy)
-
-Recommended Platforms:
-- Railway.app (easy NestJS deployment)
-- Render.com (free tier available)
-- AWS Elastic Beanstalk
-- Google Cloud Run
-- DigitalOcean App Platform
-
-Environment Variables in Production:
-- GEMINI_API_KEY: From Google AI Studio
-- PORT: Usually set by platform
-- NODE_ENV: production
-- CORS_ORIGIN: Your frontend URL
-
-Pre-Deployment Checklist:
-[ ] Replace hardcoded CORS origin with env variable
-[ ] Add Helmet.js for security headers
-[ ] Add rate limiting (express-rate-limit)
-[ ] Set up logging service
-[ ] Add health check endpoint
-[ ] Configure file upload limits
-[ ] Test with production API key
-[ ] Set up monitoring/alerts
 
 KNOWN LIMITATIONS
 -----------------
@@ -565,9 +481,6 @@ KNOWN LIMITATIONS
    - Long-running analyses block request
    - Could add: Bull, BullMQ for async processing
 
-3. No file validation
-   - Trusts mimetype from client
-   - Could add: Magic byte checking
 
 4. No result caching
    - Same file analyzed multiple times = wasted API calls
@@ -619,26 +532,5 @@ Maintenance Tasks:
 - Monthly: Update dependencies (npm audit fix)
 - Quarterly: Review API usage costs
 - Yearly: Rotate API keys
-
-COST ESTIMATION
----------------
-Gemini API Costs (Current Usage):
-- Free tier: 15 req/min, 1M tokens/day
-- Typical resume: ~1000 tokens
-- Daily limit: ~1000 analyses
-
-Paid Tier (if needed):
-- $0.075 per 1M input tokens
-- 10,000 resumes/month = $0.75
-- Negligible for portfolio/demo use
-
-Infrastructure Costs:
-- Development: $0 (localhost)
-- Production (minimal):
-  - Railway/Render free tier: $0
-  - Custom domain: ~$12/year
-  - SSL: $0 (Let's Encrypt)
-  
-Total Monthly Cost (low traffic): $0-5
 
 =============================================================================
