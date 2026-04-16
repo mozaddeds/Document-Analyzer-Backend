@@ -8,6 +8,8 @@ A NestJS REST API that receives PDF files, processes them using Google's
 Gemini AI API, and returns structured summaries. Handles file uploads via 
 Multer and provides CORS support for frontend integration.
 
+PROJECT LIVE LINK: [Document Analyzer Backend](https://document-analyzer-backend-lb95.onrender.com)
+
 TECH STACK
 ----------
 - Framework: NestJS 10+
